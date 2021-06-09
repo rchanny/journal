@@ -1,0 +1,287 @@
+{% extends "main_django.html" %}
+import pytz
+import six
+from datetime import datetime, timedelta
+from django.urls import reverse
+from django.utils.translation import ugettext as _
+from django.template import RequestContext
+from common.djangoapps.entitlements.models import CourseEntitlement
+from common.djangoapps.third_party_auth import pipeline
+from common.djangoapps.util.date_utils import strftime_localized
+from opaque_keys.edx.keys import CourseKey
+from openedx.core.djangoapps.content.course_overviews.models import CourseOverview
+from openedx.core.djangoapps.site_configuration import helpers as configuration_helpers
+from openedx.core.djangolib.js_utils import dump_js_escaped_json, js_escaped_string
+from openedx.core.djangolib.markup import HTML, Text
+
+from common.djangoapps.student.models import CourseEnrollment
+{% block title %} Journal Lists {% endblock %}
+{% block body %}
+    <div class="content-wrapper main-container">
+        <div class="dashboard">
+            <div class="main-container">
+                <div class="my-journalWrapper">
+                    <!-- HEADER -->
+                    <div class="Jheader">
+                        <h2 class="titleIsha">My Journal</h2>
+                        <p class="importantNotify"><span>Important:</span> Only modules with reflection entry will be shown here.</p>
+                    </div>
+                    <!-- SEARCH & TILE SWITCH WRAPPER -->
+                    <div class="searchTileWrapper">
+                        <div class="searchBox">
+                            <img src="images/Search-icon.svg" alt="">
+                            <input type="text" name="" value="" placeholder="Search for keywords…">
+                        </div>
+                        <div class="tileSec">
+                            <div href="#" class="[ icon  icon--grid ]  [ fa  fa-th ]  [ icon ] iconSe  active"><svg enable-background="new 0 0 24 24" height="512" viewBox="0 0 24 24" width="512" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="m5 0h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m5 9h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m5 18h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m14 0h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m14 9h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m14 18h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m23 0h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m23 9h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m23 18h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" /></svg></div>
+                            <div href="#" class="[ icon  icon--list ]  [ fa  fa-reorder ] iconSe  [ icon ]"><svg id="light" enable-background="new 0 0 24 24" height="512" viewBox="0 0 24 24" width="512" xmlns="http://www.w3.org/2000/svg">
+                                    <g>
+                                        <path d="m7.5 6h-6c-.827 0-1.5-.673-1.5-1.5v-3c0-.827.673-1.5 1.5-1.5h6c.827 0 1.5.673 1.5 1.5v3c0 .827-.673 1.5-1.5 1.5zm-6-5c-.275 0-.5.224-.5.5v3c0 .276.225.5.5.5h6c.275 0 .5-.224.5-.5v-3c0-.276-.225-.5-.5-.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m7.5 15h-6c-.827 0-1.5-.673-1.5-1.5v-3c0-.827.673-1.5 1.5-1.5h6c.827 0 1.5.673 1.5 1.5v3c0 .827-.673 1.5-1.5 1.5zm-6-5c-.275 0-.5.224-.5.5v3c0 .276.225.5.5.5h6c.275 0 .5-.224.5-.5v-3c0-.276-.225-.5-.5-.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m7.5 24h-6c-.827 0-1.5-.673-1.5-1.5v-3c0-.827.673-1.5 1.5-1.5h6c.827 0 1.5.673 1.5 1.5v3c0 .827-.673 1.5-1.5 1.5zm-6-5c-.275 0-.5.224-.5.5v3c0 .276.225.5.5.5h6c.275 0 .5-.224.5-.5v-3c0-.276-.225-.5-.5-.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m23.5 2h-12c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h12c.276 0 .5.224.5.5s-.224.5-.5.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m23.5 5h-12c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h12c.276 0 .5.224.5.5s-.224.5-.5.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m23.5 11h-12c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h12c.276 0 .5.224.5.5s-.224.5-.5.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m23.5 14h-12c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h12c.276 0 .5.224.5.5s-.224.5-.5.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m23.5 20h-12c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h12c.276 0 .5.224.5.5s-.224.5-.5.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m23.5 23h-12c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h12c.276 0 .5.224.5.5s-.224.5-.5.5z" />
+                                    </g>
+                                </svg></div>
+                        </div>
+                    </div>
+                    <!-- SEARCH LISTING -->
+                    <div class="my-courses my-journalListing grid group" id="my-courses">
+                        <ul class="listing-courses">
+                            <li class="course-item">
+                                <div class="course-container" lang="en">
+                                    <article class="course" aria-labelledby="course-title-course" id="course-card-0">
+                                        <section class="details" aria-labelledby="details-heading-course-v1:Isha_Foundation+WBS+2021_05_T1">
+                                            <div class="wrapper-course-image" aria-hidden="true">
+                                                <a href="#" data-course-key="#" class="cover course-target-link" tabindex="-1">
+                                                    <img src="https://isha.azureedge.net/asset-v1:Isha_Foundation+WBS+2021_05_T1+type@asset+block@wbs_life-beyond-stress-uai-696x392.jpg" class="course-image" alt="WBS Life Beyond Stress Home Page">
+                                                </a>
+                                            </div>
+                                            <a  href="#"  data-course-key="course-v1:Isha_Foundation"class="course-target-link">
+                                                <div class="wrapper-course-details">
+                                                    <div class="mainTilesec">
+                                                        <h3 class="course-title" id="journal1">
+                                                            <a data-course-key="course-v1:Isha_Foundation" href="#" class="course-target-link">Life Beyond Stress</a>
+                                                        </h3>
+                                                        <p class="ishaName">Isha_Foundation</p>
+                                                    </div>
+                                                    <div class="tileVCourseInfo">
+                                                        <div class="course-info">
+                                                            <span class="info-university">5 Chapters - </span>
+                                                            <!--sambaash added-->
+                                                            <span class="info-university">43 Lessons - </span>
+                                                            <!--sambaash added-->
+                                                            <span class="info-university">4 Action Items</span>
+                                                        </div>
+                                                        <div class="wrapper-course-actions wrapper-journal-actions">
+                                                            <div class="course-actions">
+                                                                <a href="#" class="course-target-link enter-course " data-course-key="course-v1:Isha_Foundation+WBS+2021_05_T1">
+                                                                    View Notes
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </section>
+                                    </article>
+                                </div>
+                            </li>
+                            <li class="course-item">
+                                <div class="course-container" lang="en">
+                                    <article class="course" aria-labelledby="course-title-course" id="course-card-0">
+                                        <section class="details" aria-labelledby="details-heading-course-v1:Isha_Foundation+WBS+2021_05_T1">
+                                            <div class="wrapper-course-image" aria-hidden="true">
+                                                <a href="#" data-course-key="#" class="cover course-target-link" tabindex="-1">
+                                                    <img src="https://isha.azureedge.net/asset-v1:Isha_Foundation+WBS_Corona+2021_05+type@asset+block@wbs_equip-corona-scaled-uai-1032x580.jpg" class="course-image" alt="WBS Life Beyond Stress Home Page">
+                                                </a>
+                                            </div>
+                                            <a data-course-key="course-v1:Isha_Foundation" href="#" class="course-target-link">
+                                                <div class="wrapper-course-details">
+                                                    <div class="mainTilesec">
+                                                        <h3 class="course-title" id="journal1">
+                                                            <a data-course-key="course-v1:Isha_Foundation" href="#" class="course-target-link">Equipping yourself for the “Corona Era”</a>
+                                                        </h3>
+                                                        <p class="ishaName">Isha_Foundation</p>
+                                                    </div>
+                                                    <div class="tileVCourseInfo">
+                                                        <div class="course-info">
+                                                            <span class="info-university">5 Chapters - </span>
+                                                            <!--sambaash added-->
+                                                            <span class="info-university">43 Lessons - </span>
+                                                            <!--sambaash added-->
+                                                            <span class="info-university">4 Action Items</span>
+                                                        </div>
+                                                        <div class="wrapper-course-actions wrapper-journal-actions">
+                                                            <div class="course-actions">
+                                                                <a href="#" class="course-target-link enter-course  data-course-key=" course-v1:Isha_Foundation+WBS+2021_05_T1">
+                                                                    View Notes
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </section>
+                                    </article>
+                                </div>
+                            </li>
+                            <li class="course-item">
+                                <div class="course-container" lang="en">
+                                    <article class="course" aria-labelledby="course-title-course" id="course-card-0">
+                                        <section class="details" aria-labelledby="details-heading-course-v1:Isha_Foundation+WBS+2021_05_T1">
+                                            <div class="wrapper-course-image" aria-hidden="true">
+                                                <a href="#" data-course-key="#" class="cover course-target-link" tabindex="-1">
+                                                    <img src="https://isha.azureedge.net/asset-v1:Isha_Foundation+WBS_MEMW+2021_05+type@asset+block@wbs-mental-wellbeing-uai-818x460.png" class="course-image" alt="WBS Life Beyond Stress Home Page">
+                                                </a>
+                                            </div>
+                                            <a data-course-key="course-v1:Isha_Foundation" href="#" class="course-target-link">
+                                                <div class="wrapper-course-details">
+                                                    <div class="mainTilesec">
+                                                        <h3 class="course-title" id="journal1">
+                                                            <a data-course-key="course-v1:Isha_Foundation" href="#" class="course-target-link">Mastering Emotional and Mental Wellbeing</a>
+                                                        </h3>
+                                                        <p class="ishaName">Isha_Foundation</p>
+                                                    </div>
+                                                    <div class="tileVCourseInfo">
+                                                        <div class="course-info">
+                                                            <span class="info-university">5 Chapters - </span>
+                                                            <!--sambaash added-->
+                                                            <span class="info-university">43 Lessons - </span>
+                                                            <!--sambaash added-->
+                                                            <span class="info-university">4 Action Items</span>
+                                                        </div>
+                                                        <div class="wrapper-course-actions wrapper-journal-actions">
+                                                            <div class="course-actions">
+                                                                <a href="#" class="course-target-link enter-course  data-course-key=" course-v1:Isha_Foundation+WBS+2021_05_T1">
+                                                                    View Notes
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </section>
+                                    </article>
+                                </div>
+                            </li>
+                            <li class="course-item">
+                                <div class="course-container" lang="en">
+                                    <article class="course" aria-labelledby="course-title-course" id="course-card-0">
+                                        <section class="details" aria-labelledby="details-heading-course-v1:Isha_Foundation+WBS+2021_05_T1">
+                                            <div class="wrapper-course-image" aria-hidden="true">
+                                                <a href="#" data-course-key="#" class="cover course-target-link" tabindex="-1">
+                                                    <img src="https://isha.azureedge.net/asset-v1:Isha_foundation+WBS_TFT+2021_05+type@asset+block@wbs_tools-for-transformation-scaled-uai-1032x580.jpg" class="course-image" alt="WBS Life Beyond Stress Home Page">
+                                                </a>
+                                            </div>
+                                            <a data-course-key="course-v1:Isha_Foundation" href="#" class="course-target-link">
+                                                <div class="wrapper-course-details">
+                                                    <div class="mainTilesec">
+                                                        <h3 class="course-title" id="journal1">
+                                                            <a data-course-key="course-v1:Isha_Foundation" href="#" class="course-target-link">Tools of transformation</a>
+                                                        </h3>
+                                                        <p class="ishaName">Isha_Foundation</p>
+                                                    </div>
+                                                    <div class="tileVCourseInfo">
+                                                        <div class="course-info">
+                                                            <span class="info-university">5 Chapters - </span>
+                                                            <!--sambaash added-->
+                                                            <span class="info-university">43 Lessons - </span>
+                                                            <!--sambaash added-->
+                                                            <span class="info-university">4 Action Items</span>
+                                                        </div>
+                                                        <div class="wrapper-course-actions wrapper-journal-actions">
+                                                            <div class="course-actions">
+                                                                <a href="#" class="course-target-link enter-course  data-course-key=" course-v1:Isha_Foundation+WBS+2021_05_T1">
+                                                                    View Notes
+                                                                </a>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </a>
+                                        </section>
+                                    </article>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script type="text/javascript">
+    (function() {
+
+
+        /**
+         * Vanilla JS
+         */
+        /* Variables */
+        var icon = document.getElementsByClassName('icon');
+        var products = document.getElementsByClassName('my-journalListing');
+
+        /* Functions */
+        // Has class
+        function hasClass(elem, className) {
+            return elem.classList.contains(className);
+        }
+
+        /* Do stuff */
+        // For each icon
+        for (var i = 0, len = icon.length; i < len; i++) {
+            // On click of icon
+            icon[i].addEventListener('click', function() {
+                // If clicked icon has 'active' class
+                if (hasClass(this, 'active')) {
+                    // Do nothing
+                    return;
+                    // If clicked icon doesn't have 'active' class
+                } else {
+                    // For each icon
+                    for (var j = 0, len = icon.length; j < len; j++) {
+                        // Toggle the 'active' class
+                        icon[j].classList.toggle('active');
+                    }
+                    // Toggle the 'list' and 'grid' classes
+                    products[0].classList.toggle('list');
+                    products[0].classList.toggle('grid');
+
+                }
+
+            });
+
+        }
+    })();
+    </script>
+
+{% endblock %}

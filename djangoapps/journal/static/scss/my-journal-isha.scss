@@ -1,0 +1,416 @@
+.my-journalWrapper {
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.Jheader {
+    width: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+.JheaderAssesment {
+    width: 100%;
+    margin: 0;
+    padding: 25px 40px;
+    box-sizing: border-box;
+
+}
+
+.titleIsha {
+
+    font-family: "Nunito Sans", sans-serif !important;
+    font-size: 28px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: left;
+    color: #555555;
+    margin: 0;
+    margin-bottom: 15px;
+}
+
+.importantNotify {
+    font-family: "Nunito Sans", sans-serif !important;
+    font-size: 14px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.36;
+    letter-spacing: 0.4px;
+    text-align: left;
+    color: #8d8d8d;
+
+    span {
+        font-weight: 600;
+        color: #cf472d;
+    }
+}
+
+
+.searchTileWrapper {
+    display: flex;
+    width: 100%;
+    flex-direction: row;
+    margin-top: 30px;
+    box-sizing: border-box;
+    padding-right: 2%;
+    padding-left: 0%;
+    height: 50px;
+
+    .searchBox {
+        width: 80%;
+        display: flex;
+        align-items: center;
+        margin: 0;
+        padding: 0;
+        position: relative;
+
+        input {
+            font-size: 22px;
+            font-weight: normal;
+            font-stretch: normal;
+            font-style: normal;
+            line-height: normal;
+            letter-spacing: 0;
+            text-align: left;
+            color: #555555;
+            width: 100%;
+            border: 0;
+            border-bottom: 1px solid #dfe3eb;
+            border-radius: 0;
+            padding: 20px 20px 20px 30px !important;
+            background-color: #f6f5f3;
+            box-shadow: none;
+            font-family: "Nunito Sans", sans-serif !important;
+
+            &:focus {
+                outline: none;
+                border-color: #dfe3eb;
+            }
+
+            &::placeholder {
+                color: #8892a5;
+            }
+
+        }
+
+        img {
+            width: 16px;
+            position: absolute;
+            top: 50%;
+            margin-top: -9px;
+        }
+    }
+
+    .tileSec {
+        width: 20%;
+        text-align: right;
+        display: flex;
+        align-items: center;
+        justify-content: flex-end;
+
+        svg {
+            width: 20px;
+            margin-right: 15px;
+            cursor: pointer;
+            height: auto;
+        }
+
+        .tileSec .iconSe {
+            display: none !important;
+        }
+
+        .tileSec .iconSe.active {
+            display: block;
+        }
+    }
+}
+
+.searchEmptySec {
+    width: 100%;
+    box-sizing: border-box;
+    height: auto;
+    min-height: 400px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+
+    .SEwrap {
+        width: 100%;
+        max-width: 375px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        img {
+            width: 100px;
+            margin-bottom: 20px;
+        }
+
+        p {
+            font-size: 16px;
+            font-weight: 300;
+            font-stretch: normal;
+            font-style: normal;
+            line-height: normal;
+            letter-spacing: normal;
+            text-align: center;
+            color: #000000;
+        }
+    }
+}
+
+.my-journalListing {
+
+    margin-top: 50px !important;
+
+
+    &.group.list {
+        margin: 0 auto;
+        max-width: 1115px;
+
+        .ul.listing-courses {
+            flex-direction: column;
+        }
+
+        .listing-courses .course-item {
+            width: 100%;
+
+
+
+            .course .details .wrapper-course-image .cover .course-image {
+                width: 175px;
+                height: 117px;
+            }
+        }
+    }
+
+}
+
+.iconSe {
+    opacity: 0.2;
+}
+
+.iconSe.active {
+    opacity: 1;
+
+    svg {
+        fill: #cf4c2d;
+    }
+}
+
+.dashboard .main-container .my-courses.my-journalListing.group.list section.details {
+    flex-direction: row;
+
+}
+
+.dashboard .main-container .my-courses.my-journalListing.group.list .course .details .wrapper-course-image {
+    width: 175px;
+}
+
+.dashboard .main-container .my-courses.my-journalListing.group.list .course .details .wrapper-course-details {
+    width: 100%
+}
+
+.dashboard .main-container .my-courses.my-journalListing.group.list .course .details .wrapper-course-details {
+    display: flex;
+    min-height: auto;
+    max-height: 100%;
+    justify-content: normal;
+    flex-direction: row;
+}
+
+.dashboard .main-container .my-courses.my-journalListing.group.list .course .details .wrapper-course-details .wrapper-course-actions.wrapper-journal-actions {
+    display: block;
+    margin-top: 0 !important;
+}
+
+.dashboard .main-container .my-courses.my-journalListing.group.list .tileVCourseInfo {
+    width: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+
+    .course-info {
+        margin-right: 40px;
+    }
+}
+
+.dashboard .main-container .my-courses.my-journalListing.group.list .mainTilesec {
+    width: 50%;
+}
+
+
+p.ishaName {
+    font-size: 16px;
+    font-weight: normal;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: normal;
+    letter-spacing: normal;
+    text-align: left;
+    margin-bottom: 20px;
+}
+
+.dashboard .main-container .my-courses.my-journalListing .course .details .wrapper-course-details {
+    display: flex;
+    min-height: 170px;
+    max-height: 200px;
+    justify-content: normal;
+}
+
+.dashboard .main-container .my-courses.my-journalListing .course .details .wrapper-course-details .course-info [class*="info-"] {
+    color: #8d8d8d;
+    font-size: 12px;
+    margin-bottom: 5px;
+}
+
+.dashboard .main-container .my-courses.my-journalListing .course .details .wrapper-course-details .course-title a {
+    margin-bottom: 0px;
+
+}
+
+.dashboard .main-container .my-courses.my-journalListing .course .details .wrapper-course-details .wrapper-course-actions.wrapper-journal-actions {
+    display: none;
+}
+
+
+
+
+
+section.preAssesContainer.assesmentDatesec.about {
+    margin: 20px auto 0 0;
+    max-width: 670px;
+    padding: 0 20px;
+}
+
+.course-wrapper .course-content section.preAssesContainer.assesmentDatesec h1,
+.course-wrapper .courseware-results-wrapper section.preAssesContainer.assesmentDatesec h1 {
+    margin: 0 0 20px;
+    letter-spacing: 0;
+}
+
+.course-index .accordion.myAssesment .course-navigation .chapter-content-container .chapter-menu .menu-item a p.accordion-display-name {
+    margin-left: 15px;
+}
+
+.course-index .accordion.myAssesment .course-navigation .button-chapter .group-heading .icon {
+    position: absolute;
+    right: 20px;
+    top: 16px;
+    font-size: 0.875em;
+    color: #c8c8c8;
+    left: auto;
+}
+
+.course-index .accordion.myAssesment .course-navigation .button-chapter.active .group-heading {
+    color: #333333 !important;
+    font-size: 18px !important;
+    font-weight: 600 !important;
+}
+
+.course-index .accordion.myAssesment .course-navigation .button-chapter .group-heading {
+    color: #333 !important;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.1) !important;
+}
+
+.course-index .accordion.myAssesment .course-navigation .chapter-content-container .chapter-menu .menu-item {
+    margin: 10px 0;
+    background: inherit;
+}
+
+span.customAIcon.icon.fa.fa-caret-down svg {
+    transform: none;
+    width: 17px;
+    height: 17px;
+}
+
+.accordionToggleBtn.myAstoggle {
+    width: 175px;
+
+    &:after {
+        margin-top: -8px;
+    }
+}
+
+.noneditableAsses {
+    border: 2px solid #e4e4e4;
+    height: 100%;
+    min-height: 200px;
+    box-sizing: border-box;
+    border-radius: 3px;
+    min-width: 300px;
+
+    background: #fff;
+    border-radius: 0;
+    box-sizing: border-box;
+    font: normal 1em "Nunito Sans", sans-serif;
+    padding: 10px 15px;
+    vertical-align: top;
+    -webkit-font-smoothing: antialiased;
+
+    ul {
+        margin-top: 0;
+        padding: 0;
+
+        li {
+            list-style: decimal;
+            margin-left: 5px;
+        }
+    }
+}
+
+
+
+.freetextresponse .word-count-message.customTKM {
+    font-size: 16px !important;
+    font-weight: 600 !important;
+    margin-bottom: 10px;
+    padding: 20px 15px 0;
+}
+
+@media screen and (max-width: 767px)
+{
+    .dashboard .main-container .my-courses.my-journalListing.group.list .course .details .wrapper-course-details
+    {
+        flex-direction: column;
+            padding: 5px 10px;
+    }
+    .dashboard .main-container .my-courses.my-journalListing.group.list .mainTilesec {
+    width: 100%;
+}
+.dashboard .main-container .my-courses.my-journalListing.group.list .tileVCourseInfo {
+    width: 100%;
+    }
+    .dashboard .main-container .my-courses.my-journalListing.group.list .course .details .wrapper-course-details .wrapper-course-actions.wrapper-journal-actions
+    {
+        display: none;
+    }
+    .dashboard .main-container .my-courses.my-journalListing .course .details .wrapper-course-details .course-title a
+    {
+        font-size: 18px;
+        line-height: normal;
+    }
+    p.ishaName
+    {
+        font-size: 14px;
+    }
+    .dashboard .main-container .my-courses.my-journalListing.group.list .tileVCourseInfo .course-info
+    {
+        margin-right: 0px;
+    }
+    .dashboard .main-container .my-courses.my-journalListing .course .details .wrapper-course-details .course-info [class*="info-"]
+    {
+        font-size: 11px;
+    }
+    .my-journalListing.group.list .listing-courses .course-item .course .details .wrapper-course-image .cover .course-image {
+    width: 175px;
+    height: 122px;
+}
+}

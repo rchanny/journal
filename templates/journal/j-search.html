@@ -1,0 +1,76 @@
+{% extends "main_django.html" %}
+{% block title %} Journal Lists {% endblock %}
+{% block body %}
+    <div class="content-wrapper main-container">
+        <div class="dashboard">
+            <div class="main-container">
+                <div class="my-journalWrapper">
+                    <!-- HEADER -->
+                    <div class="Jheader">
+                        <h2 class="titleIsha">My Journal</h2>
+                        <p class="importantNotify"><span>Important:</span> Only modules with reflection entry will be shown here.</p>
+                    </div>
+                    <!-- SEARCH & TILE SWITCH WRAPPER -->
+                        <div class="searchTileWrapper">
+                        <div class="searchBox">
+                            <img src="images/Search-icon.svg" alt="">
+                            <input type="text" name="" value="" placeholder="Search for keywords…">
+                        </div>
+                        <div class="tileSec">
+                            <div href="#" class="[ icon  icon--grid ]  [ fa  fa-th ]  [ icon ] iconSe  active"><svg enable-background="new 0 0 24 24" height="512" viewBox="0 0 24 24" width="512" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="m5 0h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m5 9h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m5 18h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m14 0h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m14 9h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m14 18h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m23 0h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m23 9h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m23 18h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" /></svg></div>
+                            <div href="#" class="[ icon  icon--list ]  [ fa  fa-reorder ] iconSe  [ icon ]"><svg id="light" enable-background="new 0 0 24 24" height="512" viewBox="0 0 24 24" width="512" xmlns="http://www.w3.org/2000/svg">
+                                    <g>
+                                        <path d="m7.5 6h-6c-.827 0-1.5-.673-1.5-1.5v-3c0-.827.673-1.5 1.5-1.5h6c.827 0 1.5.673 1.5 1.5v3c0 .827-.673 1.5-1.5 1.5zm-6-5c-.275 0-.5.224-.5.5v3c0 .276.225.5.5.5h6c.275 0 .5-.224.5-.5v-3c0-.276-.225-.5-.5-.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m7.5 15h-6c-.827 0-1.5-.673-1.5-1.5v-3c0-.827.673-1.5 1.5-1.5h6c.827 0 1.5.673 1.5 1.5v3c0 .827-.673 1.5-1.5 1.5zm-6-5c-.275 0-.5.224-.5.5v3c0 .276.225.5.5.5h6c.275 0 .5-.224.5-.5v-3c0-.276-.225-.5-.5-.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m7.5 24h-6c-.827 0-1.5-.673-1.5-1.5v-3c0-.827.673-1.5 1.5-1.5h6c.827 0 1.5.673 1.5 1.5v3c0 .827-.673 1.5-1.5 1.5zm-6-5c-.275 0-.5.224-.5.5v3c0 .276.225.5.5.5h6c.275 0 .5-.224.5-.5v-3c0-.276-.225-.5-.5-.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m23.5 2h-12c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h12c.276 0 .5.224.5.5s-.224.5-.5.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m23.5 5h-12c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h12c.276 0 .5.224.5.5s-.224.5-.5.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m23.5 11h-12c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h12c.276 0 .5.224.5.5s-.224.5-.5.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m23.5 14h-12c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h12c.276 0 .5.224.5.5s-.224.5-.5.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m23.5 20h-12c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h12c.276 0 .5.224.5.5s-.224.5-.5.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m23.5 23h-12c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h12c.276 0 .5.224.5.5s-.224.5-.5.5z" />
+                                    </g>
+                                </svg></div>
+                        </div>
+                    </div>
+                    <!-- SEARCH EMPTY -->
+                    <div class="searchEmptySec">
+                        <div class="SEwrap">
+                            <img src="images/search-empty.svg">
+                            <p>
+                                There is currently no reflection entry found.
+                                You can add them under <b>‘Reflections’</b> of each lesson.
+                            </p>
+                        </div>
+                    </div>
+                   
+                </div>
+            </div>
+        </div>
+    </div>
+{% endblock %}

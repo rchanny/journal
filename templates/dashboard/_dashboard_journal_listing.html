@@ -1,0 +1,157 @@
+<%page args="course_overview, enrollment, entitlement, entitlement_session, course_card_index, is_unfulfilled_entitlement, is_fulfilled_entitlement, entitlement_available_sessions, entitlement_expiration_date, entitlement_expired_at, show_courseware_link, cert_status, can_refund_entitlement, can_unenroll, credit_status, show_email_settings, course_mode_info, is_paid_course, is_course_voucher_refundable, verification_status, course_requirements, dashboard_index, share_settings, related_programs, display_course_modes_on_dashboard, show_consent_link, enterprise_customer_name, resume_button_url, partner_managed_enrollment" expression_filter="h"/>
+
+<%!
+import datetime
+import six
+
+from django.conf import settings
+from django.utils.http import urlencode, urlquote_plus
+from django.utils.translation import ugettext as _
+from django.utils.translation import ungettext
+from django.urls import reverse
+from common.djangoapps.course_modes.models import CourseMode
+from common.djangoapps.course_modes.helpers import enrollment_mode_display
+from lms.djangoapps.verify_student.services import IDVerificationService
+from openedx.core.djangolib.js_utils import dump_js_escaped_json, js_escaped_string
+from openedx.core.djangolib.markup import HTML, Text
+from openedx.features.course_experience import course_home_url_name
+from common.djangoapps.student.helpers import (
+  VERIFY_STATUS_NEED_TO_VERIFY,
+  VERIFY_STATUS_SUBMITTED,
+  VERIFY_STATUS_RESUBMITTED,
+  VERIFY_STATUS_APPROVED,
+  VERIFY_STATUS_MISSED_DEADLINE,
+  VERIFY_STATUS_NEED_TO_REVERIFY,
+  DISABLE_UNENROLL_CERT_STATES,
+)
+from common.djangoapps.util.course import get_link_for_about_page, get_encoded_course_sharing_utm_params
+from lms.djangoapps.experiments.utils import UPSELL_TRACKING_FLAG
+%>
+
+<%
+  reverify_link = IDVerificationService.get_verify_location()
+  cert_name_short = course_overview.cert_name_short
+  if cert_name_short == "":
+    cert_name_short = settings.CERT_NAME_SHORT
+
+  cert_name_long = course_overview.cert_name_long
+  if cert_name_long == "":
+    cert_name_long = settings.CERT_NAME_LONG
+
+  is_course_expired = hasattr(show_courseware_link, 'error_code') and show_courseware_link.error_code == 'audit_expired'
+%>
+
+<%namespace name='static' file='../static_content.html'/>
+
+<li class="course-item">
+  % if display_course_modes_on_dashboard:
+    <%
+        course_verified_certs = enrollment_mode_display(
+            enrollment.mode,
+            verification_status.get('status'),
+            course_overview.id
+        )
+    %>
+    <%
+        mode_class = course_verified_certs.get('display_mode', '')
+        if mode_class:
+            mode_class = ' ' + mode_class ;
+    %>
+  % else:
+    <% mode_class = '' %>
+  % endif
+      <div class="course-container"
+        % if getattr(course_overview, 'language'):
+          lang="${course_overview.language}"
+        % endif
+      >
+<article class="course${mode_class}" aria-labelledby="course-title-${enrollment.course_id}" id="course-card-${course_card_index}">
+  <% course_target = reverse(course_home_url_name(course_overview.id), args=[six.text_type(course_overview.id)]) %>
+  <section class="details" aria-labelledby="details-heading-${enrollment.course_id}">
+    <div class="wrapper-course-image" aria-hidden="true">
+      % if show_courseware_link and not is_unfulfilled_entitlement:
+        % if not is_course_expired:
+            <a href="${course_target}" data-course-key="${enrollment.course_id}" class="cover course-target-link" tabindex="-1">
+              <img src="${course_overview.image_urls['small']}" class="course-image" alt="${_('{course_number} {course_name} Home Page').format(course_number=course_overview.number, course_name=course_overview.display_name_with_default)}" />
+            </a>
+        % else:
+            <a class="fade-cover">
+              <img src="${course_overview.image_urls['small']}" class="course-image" alt="${_('{course_number} {course_name} Cover Image').format(course_number=course_overview.number, course_name=course_overview.display_name_with_default)}" />
+            </a>
+        % endif
+      % else:
+        <a class="cover">
+          <img src="${course_overview.image_urls['small']}" class="course-image" alt="${_('{course_number} {course_name} Cover Image').format(course_number=course_overview.number, course_name=course_overview.display_name_with_default)}" />
+        </a>
+      % endif
+      % if display_course_modes_on_dashboard and course_verified_certs.get('display_mode') != 'audit':
+        <span class="sts-enrollment" title="${course_verified_certs.get('enrollment_title')}">
+          <span class="label">${_("Enrolled as: ")}</span>
+          % if course_verified_certs.get('show_image'):
+              <img class="deco-graphic" src="${static.url('images/verified-ribbon.png')}" alt="${course_verified_certs.get('image_alt')}" />
+          % endif
+          <div class="sts-enrollment-value">${course_verified_certs.get('enrollment_value')}</div>
+        </span>
+      % endif
+    </div>
+    <a href="${course_target}" data-course-key="${enrollment.course_id}" class="course-target-link">
+      <div class="wrapper-course-details">
+        <div class="mainTilesec">
+          <h3 class="course-title" id="course-title-${enrollment.course_id}">
+            % if show_courseware_link and not is_unfulfilled_entitlement:
+              % if not is_course_expired:
+                <a data-course-key="${enrollment.course_id}" href="${course_target}" class="course-target-link">${course_overview.display_name_with_default}</a>
+              % else:
+                <a class="disable-look" data-course-key="${enrollment.course_id}">${course_overview.display_name_with_default}</a>
+              % endif
+            % else:
+              <span>${course_overview.display_name_with_default}</span>
+            % endif
+          </h3>
+          <p class="ishaName">Isha_Foundation</p>
+        </div>
+        <div class="tileVCourseInfo">
+            <div class="course-info">
+              <span class="info-university">5 Chapters - </span>
+              <!--sambaash added-->
+              <span class="info-university">43 Lessons - </span>
+              <!--sambaash added-->
+              <span class="info-university">4 Action Items</span>
+            </div>
+            <div class="wrapper-course-actions wrapper-journal-actions">
+              <div class="course-actions">
+                <a href="${course_target}" class="enter-course course-target-link" data-course-key="${enrollment.course_id}">${_('View Notes')}</a>
+              </div>
+            </div>
+        </div>
+      </div>
+    </a>
+  </section>
+</article>
+</div>
+</li>
+
+% if share_settings.get('DASHBOARD_FACEBOOK', False) and share_settings.get('DASHBOARD_TWITTER', False):
+    <%static:require_module_async module_name="js/course_sharing/course_sharing_events" class_name="CourseSharingEvents">
+        CourseSharingEvents("${course_overview.id | n, js_escaped_string}");
+    </%static:require_module_async>
+%endif
+
+<%static:require_module_async module_name="js/dateutil_factory" class_name="DateUtilFactory">
+    DateUtilFactory.transform(iterationKey=".localized-datetime");
+</%static:require_module_async>
+
+% if UPSELL_TRACKING_FLAG.is_enabled():
+    <%static:require_module_async module_name="js/commerce/track_ecommerce_events" class_name="TrackECommerceEvents">
+      if (window.loadedECommerceEvents === undefined) {
+        window.loadedECommerceEvents = true;
+
+        TrackECommerceEvents.trackUpsellClick($(".track_course_dashboard_green_button"), 'course_dashboard_green', {
+          pageName: "course_dashboard",
+          linkType: "button",
+          linkCategory: "green_upgrade"
+        });
+      }
+
+    </%static:require_module_async>
+%endif
