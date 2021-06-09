@@ -19,6 +19,8 @@ from openedx.core.djangolib.js_utils import dump_js_escaped_json, js_escaped_str
 from openedx.core.djangolib.markup import HTML, Text
 
 from common.djangoapps.student.models import CourseEnrollment
+
+from lms.djangoapps.completiontracking.get_course_info import get_blocks_count, get_course_completion;
 %>
 
 <%
@@ -108,6 +110,30 @@ from common.djangoapps.student.models import CourseEnrollment
   % endif
 </%block>
 
+<div class="bannerSectionDev">
+  <img src="/static/Isha-theme/images/dashboard-cover.png">
+  <!-- <h2>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</h2> -->
+</div>
+<div class="bannerSubHeader">
+  <div class="contentWrSH">
+    <div class="bannerContent">
+        <h2><b>Check your stress & overall well-being score!</b></h2>
+        <p>We invite you to take this self-assessment to help gauge your overall level of Stress, Emotional &amp; Mental Wellbeing.</p>
+        <p>The Assessment will take about 10-15 minutes to complete. It&#39;s an optional but a highly recommended 1st step to start your journey.</p><br><br>
+        <div style="padding:0 1px" class="preAssesment" align="left">
+            <button id="Start_Pre_Assessment" style="font-size: 13px;text-shadow: none !important; margin-right: 5px;" onclick="window.location.href='/assessment'">
+                Assessment
+            </button>
+             <button id="Start_Past_Assessment" style="font-size: 13px;text-shadow: none !important;" onclick="window.location.href='/assessment/my-assessment'">
+                Past Assessment
+            </button>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+
 <div class="dashboard-notifications" tabindex="-1">
 
     %if banner_account_activation_message:
@@ -143,6 +169,7 @@ from common.djangoapps.student.models import CourseEnrollment
 </div>
 
 <main id="main" aria-label="Content" tabindex="-1">
+
     <div class="dashboard" id="dashboard-main">
       <div class="main-container">
         <div class="my-courses" id="my-courses">
@@ -196,10 +223,8 @@ from common.djangoapps.student.models import CourseEnrollment
                     enrollment = CourseEnrollment(user=user, course=CourseOverview.get_from_id(pseudo_key), mode=pseudo_session['type'])
                   # We only show email settings for entitlement cards if the entitlement has an associated enrollment
                   show_email_settings = is_fulfilled_entitlement and (entitlement_session.course_id in show_email_settings_for)
-                  course_overview = enrollment.course_overview
                 else:
                   show_email_settings = (enrollment.course_id in show_email_settings_for)
-                  course_overview = CourseOverview.get_from_id(enrollment.course_id)
 
                 session_id = enrollment.course_id
                 show_courseware_link = show_courseware_links_for.get(session_id, False)
@@ -210,14 +235,23 @@ from common.djangoapps.student.models import CourseEnrollment
                 credit_status = credit_statuses.get(session_id)
                 course_mode_info = all_course_modes.get(session_id)
                 is_paid_course = True if entitlement else (session_id in enrolled_courses_either_paid)
-                is_course_voucher_refundable = (session_id in enrolled_courses_voucher_refundable)
                 course_verification_status = verification_status_by_course.get(session_id, {})
                 course_requirements = courses_requirements_not_met.get(session_id)
                 related_programs = inverted_programs.get(six.text_type(entitlement.course_uuid if is_unfulfilled_entitlement else session_id))
                 show_consent_link = (session_id in consent_required_courses)
+                course_overview = enrollment.course_overview
                 resume_button_url = resume_button_urls[dashboard_index]
+                #sambaash added start
+                if course_overview:
+                  blocks_count = get_blocks_count(self=self, course_id=str(course_overview.id))
+                  course_completion_dict = get_course_completion(username=user.username, course_id=str(course_overview.id))
+                  course_overview.chapter_count = blocks_count["chapter"]
+                  course_overview.vertical_count = blocks_count["vertical"]
+                  course_overview.course_completion = course_completion_dict["data"][str(course_overview.id)] if not course_completion_dict["data"][str(course_overview.id)] is None else 0
+                #end
               %>
-              <%include file='dashboard/_dashboard_course_listing.html' args='course_overview=course_overview, course_card_index=dashboard_index, enrollment=enrollment, is_unfulfilled_entitlement=is_unfulfilled_entitlement, is_fulfilled_entitlement=is_fulfilled_entitlement, entitlement=entitlement, entitlement_session=entitlement_session, entitlement_available_sessions=entitlement_available_sessions, entitlement_expiration_date=entitlement_expiration_date, entitlement_expired_at=entitlement_expired_at, show_courseware_link=show_courseware_link, cert_status=cert_status, can_refund_entitlement=can_refund_entitlement, can_unenroll=can_unenroll, credit_status=credit_status, show_email_settings=show_email_settings, course_mode_info=course_mode_info, is_paid_course=is_paid_course, is_course_voucher_refundable=is_course_voucher_refundable, verification_status=course_verification_status, course_requirements=course_requirements, dashboard_index=dashboard_index, share_settings=share_settings, user=user, related_programs=related_programs, display_course_modes_on_dashboard=display_course_modes_on_dashboard, show_consent_link=show_consent_link, enterprise_customer_name=enterprise_customer_name, resume_button_url=resume_button_url, partner_managed_enrollment=partner_managed_enrollment' />
+
+              <%include file='dashboard/_dashboard_course_listing.html' args='course_overview=course_overview, course_card_index=dashboard_index, enrollment=enrollment, is_unfulfilled_entitlement=is_unfulfilled_entitlement, is_fulfilled_entitlement=is_fulfilled_entitlement, entitlement=entitlement, entitlement_session=entitlement_session, entitlement_available_sessions=entitlement_available_sessions, entitlement_expiration_date=entitlement_expiration_date, entitlement_expired_at=entitlement_expired_at, show_courseware_link=show_courseware_link, cert_status=cert_status, can_refund_entitlement=can_refund_entitlement, can_unenroll=can_unenroll, credit_status=credit_status, show_email_settings=show_email_settings, course_mode_info=course_mode_info, is_paid_course=is_paid_course, verification_status=course_verification_status, course_requirements=course_requirements, dashboard_index=dashboard_index, share_settings=share_settings, user=user, related_programs=related_programs, display_course_modes_on_dashboard=display_course_modes_on_dashboard, show_consent_link=show_consent_link, enterprise_customer_name=enterprise_customer_name, resume_button_url=resume_button_url, partner_managed_enrollment=partner_managed_enrollment' />
             % endfor
             % if show_load_all_courses_link:
                 <br/>
