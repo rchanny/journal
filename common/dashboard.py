@@ -1184,3 +1184,4 @@ def student_journal(request):
     })
 
     return render_to_response('journal.html', context)
+

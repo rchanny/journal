@@ -110,30 +110,6 @@ from lms.djangoapps.completiontracking.get_course_info import get_blocks_count, 
   % endif
 </%block>
 
-<div class="bannerSectionDev">
-  <img src="/static/Isha-theme/images/dashboard-cover.png">
-  <!-- <h2>Lorem Ipsum is simply dummy text of the printing and typesetting industry.</h2> -->
-</div>
-<div class="bannerSubHeader">
-  <div class="contentWrSH">
-    <div class="bannerContent">
-        <h2><b>Check your stress & overall well-being score!</b></h2>
-        <p>We invite you to take this self-assessment to help gauge your overall level of Stress, Emotional &amp; Mental Wellbeing.</p>
-        <p>The Assessment will take about 10-15 minutes to complete. It&#39;s an optional but a highly recommended 1st step to start your journey.</p><br><br>
-        <div style="padding:0 1px" class="preAssesment" align="left">
-            <button id="Start_Pre_Assessment" style="font-size: 13px;text-shadow: none !important; margin-right: 5px;" onclick="window.location.href='/assessment'">
-                Assessment
-            </button>
-             <button id="Start_Past_Assessment" style="font-size: 13px;text-shadow: none !important;" onclick="window.location.href='/assessment/my-assessment'">
-                Past Assessment
-            </button>
-        </div>
-    </div>
-  </div>
-</div>
-
-
-
 <div class="dashboard-notifications" tabindex="-1">
 
     %if banner_account_activation_message:
@@ -168,16 +144,65 @@ from lms.djangoapps.completiontracking.get_course_info import get_blocks_count, 
 
 </div>
 
-<main id="main" aria-label="Content" tabindex="-1">
-
+<div class="content-wrapper main-container">
+    
     <div class="dashboard" id="dashboard-main">
       <div class="main-container">
-        <div class="my-courses" id="my-courses">
+        <div class="my-journalWrapper">
           % if display_dashboard_courses:
-          <%include file="learner_dashboard/_dashboard_navigation_courses.html"/>
+          <%include file="learner_dashboard/_dashboard_navigation_journal.html"/>
           % endif
+          <!-- SEARCH & TILE SWITCH WRAPPER -->
+                    <div class="searchTileWrapper">
+                        <div class="searchBox">
+                            <img src="images/Search-icon.svg" alt="">
+                            <input type="text" name="" value="" placeholder="Search for keywords…">
+                        </div>
+                        <div class="tileSec">
+                            <div href="#" class="[ icon  icon--grid ]  [ fa  fa-th ]  [ icon ] iconSe  active"><svg enable-background="new 0 0 24 24" height="512" viewBox="0 0 24 24" width="512" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="m5 0h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m5 9h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m5 18h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m14 0h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m14 9h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m14 18h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m23 0h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m23 9h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" />
+                                    <path d="m23 18h-4c-.552 0-1 .448-1 1v4c0 .552.448 1 1 1h4c.552 0 1-.448 1-1v-4c0-.552-.448-1-1-1z" /></svg></div>
+                            <div href="#" class="[ icon  icon--list ]  [ fa  fa-reorder ] iconSe  [ icon ]"><svg id="light" enable-background="new 0 0 24 24" height="512" viewBox="0 0 24 24" width="512" xmlns="http://www.w3.org/2000/svg">
+                                    <g>
+                                        <path d="m7.5 6h-6c-.827 0-1.5-.673-1.5-1.5v-3c0-.827.673-1.5 1.5-1.5h6c.827 0 1.5.673 1.5 1.5v3c0 .827-.673 1.5-1.5 1.5zm-6-5c-.275 0-.5.224-.5.5v3c0 .276.225.5.5.5h6c.275 0 .5-.224.5-.5v-3c0-.276-.225-.5-.5-.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m7.5 15h-6c-.827 0-1.5-.673-1.5-1.5v-3c0-.827.673-1.5 1.5-1.5h6c.827 0 1.5.673 1.5 1.5v3c0 .827-.673 1.5-1.5 1.5zm-6-5c-.275 0-.5.224-.5.5v3c0 .276.225.5.5.5h6c.275 0 .5-.224.5-.5v-3c0-.276-.225-.5-.5-.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m7.5 24h-6c-.827 0-1.5-.673-1.5-1.5v-3c0-.827.673-1.5 1.5-1.5h6c.827 0 1.5.673 1.5 1.5v3c0 .827-.673 1.5-1.5 1.5zm-6-5c-.275 0-.5.224-.5.5v3c0 .276.225.5.5.5h6c.275 0 .5-.224.5-.5v-3c0-.276-.225-.5-.5-.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m23.5 2h-12c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h12c.276 0 .5.224.5.5s-.224.5-.5.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m23.5 5h-12c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h12c.276 0 .5.224.5.5s-.224.5-.5.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m23.5 11h-12c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h12c.276 0 .5.224.5.5s-.224.5-.5.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m23.5 14h-12c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h12c.276 0 .5.224.5.5s-.224.5-.5.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m23.5 20h-12c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h12c.276 0 .5.224.5.5s-.224.5-.5.5z" />
+                                    </g>
+                                    <g>
+                                        <path d="m23.5 23h-12c-.276 0-.5-.224-.5-.5s.224-.5.5-.5h12c.276 0 .5.224.5.5s-.224.5-.5.5z" />
+                                    </g>
+                                </svg></div>
+                        </div>
+                    </div>   
 
           % if len(course_entitlements + course_enrollments) > 0:
+          <div class="my-courses my-journalListing grid group" id="my-courses">
             <ul class="listing-courses">
             <%
                 share_settings = configuration_helpers.get_value(
@@ -251,7 +276,7 @@ from lms.djangoapps.completiontracking.get_course_info import get_blocks_count, 
                 #end
               %>
 
-              <%include file='dashboard/_dashboard_course_listing.html' args='course_overview=course_overview, course_card_index=dashboard_index, enrollment=enrollment, is_unfulfilled_entitlement=is_unfulfilled_entitlement, is_fulfilled_entitlement=is_fulfilled_entitlement, entitlement=entitlement, entitlement_session=entitlement_session, entitlement_available_sessions=entitlement_available_sessions, entitlement_expiration_date=entitlement_expiration_date, entitlement_expired_at=entitlement_expired_at, show_courseware_link=show_courseware_link, cert_status=cert_status, can_refund_entitlement=can_refund_entitlement, can_unenroll=can_unenroll, credit_status=credit_status, show_email_settings=show_email_settings, course_mode_info=course_mode_info, is_paid_course=is_paid_course, verification_status=course_verification_status, course_requirements=course_requirements, dashboard_index=dashboard_index, share_settings=share_settings, user=user, related_programs=related_programs, display_course_modes_on_dashboard=display_course_modes_on_dashboard, show_consent_link=show_consent_link, enterprise_customer_name=enterprise_customer_name, resume_button_url=resume_button_url, partner_managed_enrollment=partner_managed_enrollment' />
+              <%include file='dashboard/_dashboard_journal_listing.html' args='course_overview=course_overview, course_card_index=dashboard_index, enrollment=enrollment, is_unfulfilled_entitlement=is_unfulfilled_entitlement, is_fulfilled_entitlement=is_fulfilled_entitlement, entitlement=entitlement, entitlement_session=entitlement_session, entitlement_available_sessions=entitlement_available_sessions, entitlement_expiration_date=entitlement_expiration_date, entitlement_expired_at=entitlement_expired_at, show_courseware_link=show_courseware_link, cert_status=cert_status, can_refund_entitlement=can_refund_entitlement, can_unenroll=can_unenroll, credit_status=credit_status, show_email_settings=show_email_settings, course_mode_info=course_mode_info, is_paid_course=is_paid_course, verification_status=course_verification_status, course_requirements=course_requirements, dashboard_index=dashboard_index, share_settings=share_settings, user=user, related_programs=related_programs, display_course_modes_on_dashboard=display_course_modes_on_dashboard, show_consent_link=show_consent_link, enterprise_customer_name=enterprise_customer_name, resume_button_url=resume_button_url, partner_managed_enrollment=partner_managed_enrollment' />
             % endfor
             % if show_load_all_courses_link:
                 <br/>
@@ -261,6 +286,7 @@ from lms.djangoapps.completiontracking.get_course_info import get_blocks_count, 
                 </a>
             % endif
             </ul>
+          </div>
           % else:
             <div class="empty-dashboard-message">
               % if display_dashboard_courses:
@@ -348,8 +374,51 @@ from lms.djangoapps.completiontracking.get_course_info import get_blocks_count, 
         % endif
       </div>
     </div>
-</main>
+</div>
+<script type="text/javascript">
+    (function() {
 
+
+        /**
+         * Vanilla JS
+         */
+        /* Variables */
+        var icon = document.getElementsByClassName('icon');
+        var products = document.getElementsByClassName('my-journalListing');
+
+        /* Functions */
+        // Has class
+        function hasClass(elem, className) {
+            return elem.classList.contains(className);
+        }
+
+        /* Do stuff */
+        // For each icon
+        for (var i = 0, len = icon.length; i < len; i++) {
+            // On click of icon
+            icon[i].addEventListener('click', function() {
+                // If clicked icon has 'active' class
+                if (hasClass(this, 'active')) {
+                    // Do nothing
+                    return;
+                    // If clicked icon doesn't have 'active' class
+                } else {
+                    // For each icon
+                    for (var j = 0, len = icon.length; j < len; j++) {
+                        // Toggle the 'active' class
+                        icon[j].classList.toggle('active');
+                    }
+                    // Toggle the 'list' and 'grid' classes
+                    products[0].classList.toggle('list');
+                    products[0].classList.toggle('grid');
+
+                }
+
+            });
+
+        }
+    })();
+ </script>
 <div id="email-settings-modal" class="modal" aria-hidden="true">
   <div class="inner-wrapper" role="dialog" aria-labelledby="email-settings-title">
     <button class="close-modal">
