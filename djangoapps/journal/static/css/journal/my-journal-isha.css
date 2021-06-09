@@ -9,6 +9,10 @@
   margin: 0;
   padding: 0; }
 
+.fa-th:before {
+    content: none !important;
+}
+
 .JheaderAssesment {
   width: 100%;
   margin: 0;
