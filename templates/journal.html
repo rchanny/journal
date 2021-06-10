@@ -28,6 +28,7 @@ from lms.djangoapps.completiontracking.get_course_info import get_blocks_count, 
   cert_name_long = settings.CERT_NAME_LONG
 %>
 
+<link rel="stylesheet" href="${static.url('css/journal/my-journal-isha.css')}"/>
 
 <%block name="pagetitle">${_("Dashboard")}</%block>
 <%block name="bodyclass">view-dashboard is-authenticated</%block>
@@ -150,12 +151,12 @@ from lms.djangoapps.completiontracking.get_course_info import get_blocks_count, 
       <div class="main-container">
         <div class="my-journalWrapper">
           % if display_dashboard_courses:
-          <%include file="learner_dashboard/_dashboard_navigation_journal.html"/>
+          <%include file="journal/_dashboard_navigation_journal.html"/>
           % endif
           <!-- SEARCH & TILE SWITCH WRAPPER -->
                     <div class="searchTileWrapper">
                         <div class="searchBox">
-                            <img src="images/Search-icon.svg" alt="">
+                            <img src="${static.url('images/journal/Search-icon.svg')}" alt="">
                             <input type="text" name="" value="" placeholder="Search for keywords…">
                         </div>
                         <div class="tileSec">
@@ -276,7 +277,7 @@ from lms.djangoapps.completiontracking.get_course_info import get_blocks_count, 
                 #end
               %>
 
-              <%include file='dashboard/_dashboard_journal_listing.html' args='course_overview=course_overview, course_card_index=dashboard_index, enrollment=enrollment, is_unfulfilled_entitlement=is_unfulfilled_entitlement, is_fulfilled_entitlement=is_fulfilled_entitlement, entitlement=entitlement, entitlement_session=entitlement_session, entitlement_available_sessions=entitlement_available_sessions, entitlement_expiration_date=entitlement_expiration_date, entitlement_expired_at=entitlement_expired_at, show_courseware_link=show_courseware_link, cert_status=cert_status, can_refund_entitlement=can_refund_entitlement, can_unenroll=can_unenroll, credit_status=credit_status, show_email_settings=show_email_settings, course_mode_info=course_mode_info, is_paid_course=is_paid_course, verification_status=course_verification_status, course_requirements=course_requirements, dashboard_index=dashboard_index, share_settings=share_settings, user=user, related_programs=related_programs, display_course_modes_on_dashboard=display_course_modes_on_dashboard, show_consent_link=show_consent_link, enterprise_customer_name=enterprise_customer_name, resume_button_url=resume_button_url, partner_managed_enrollment=partner_managed_enrollment' />
+              <%include file='journal/_dashboard_journal_listing.html' args='course_overview=course_overview, course_card_index=dashboard_index, enrollment=enrollment, is_unfulfilled_entitlement=is_unfulfilled_entitlement, is_fulfilled_entitlement=is_fulfilled_entitlement, entitlement=entitlement, entitlement_session=entitlement_session, entitlement_available_sessions=entitlement_available_sessions, entitlement_expiration_date=entitlement_expiration_date, entitlement_expired_at=entitlement_expired_at, show_courseware_link=show_courseware_link, cert_status=cert_status, can_refund_entitlement=can_refund_entitlement, can_unenroll=can_unenroll, credit_status=credit_status, show_email_settings=show_email_settings, course_mode_info=course_mode_info, is_paid_course=is_paid_course, verification_status=course_verification_status, course_requirements=course_requirements, dashboard_index=dashboard_index, share_settings=share_settings, user=user, related_programs=related_programs, display_course_modes_on_dashboard=display_course_modes_on_dashboard, show_consent_link=show_consent_link, enterprise_customer_name=enterprise_customer_name, resume_button_url=resume_button_url, partner_managed_enrollment=partner_managed_enrollment' />
             % endfor
             % if show_load_all_courses_link:
                 <br/>
