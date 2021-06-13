@@ -6,7 +6,7 @@ View for Courseware Index
 
 
 import logging
-
+from six import text_type
 import six
 from django.conf import settings
 from django.contrib.auth.views import redirect_to_login
@@ -55,7 +55,7 @@ from xmodule.x_module import PUBLIC_VIEW, STUDENT_VIEW
 
 from lms.djangoapps.courseware.access import has_access
 from lms.djangoapps.courseware.access_utils import check_public_access
-from lms.djangoapps.courseware.courses import check_course_access_with_redirect, get_course_with_access, get_current_child, get_studio_url
+from ..courses import check_course_access_with_redirect, get_course_with_access, get_current_child, get_studio_url
 from lms.djangoapps.courseware.entrance_exams import (
     course_has_entrance_exam,
     get_entrance_exam_content,
@@ -64,17 +64,18 @@ from lms.djangoapps.courseware.entrance_exams import (
 )
 from lms.djangoapps.courseware.masquerade import check_content_start_date_for_masquerade_user, setup_masquerade
 from lms.djangoapps.courseware.model_data import FieldDataCache
-from lms.djangoapps.courseware.module_render import get_module_for_descriptor, toc_for_course
+from ..module_render import get_module_for_descriptor, toc_for_course
 from lms.djangoapps.courseware.permissions import MASQUERADE_AS_STUDENT
 from ..toggles import COURSEWARE_MICROFRONTEND_COURSE_TEAM_PREVIEW, REDIRECT_TO_COURSEWARE_MICROFRONTEND
 from ..url_helpers import get_microfrontend_url
 from .views import CourseTabView
+from lms.djangoapps.courseware.models import StudentModule
+from opaque_keys.edx.keys import CourseKey, UsageKey
 
 log = logging.getLogger("edx.courseware.views.index")
 
 TEMPLATE_IMPORTS = {'urllib': urllib}
 CONTENT_DEPTH = 2
-
 
 @method_decorator(transaction.non_atomic_requests, name='dispatch')
 class JournalIndex(View):
@@ -417,6 +418,12 @@ class JournalIndex(View):
         Also returns the table of contents for the courseware.
         """
 
+        """
+        Sambaash added
+        """
+        course_id=six.text_type(self.course_key)
+        student_id=self.request.user.id
+
         course_url_name = default_course_url_name(self.course.id)
         course_url = reverse(course_url_name, kwargs={'course_id': six.text_type(self.course.id)})
         show_search = (
@@ -461,6 +468,46 @@ class JournalIndex(View):
             self.section_url_name,
             self.field_data_cache,
         )
+        """
+        Sambaash added
+        Finds which courses have reflections written and only show those courses in accordion
+        """
+        fragment = Fragment()
+        empty_chapter = []
+        for chapter in table_of_contents['chapters']:
+            new_toc = []
+            for section in chapter['sections']:
+                module_key = section['url_name']
+                try:
+                    opaque = (StudentModule.objects.get(module_state_key__contains=module_key, student=student_id)).module_state_key
+                    block_section = modulestore().get_item(opaque, depth=None, lazy=False)
+                    display_items = block_section.get_display_items()
+                    contents = []
+                    for item in display_items:
+                        rendered_item = item.render(STUDENT_VIEW, courseware_context)
+                        fragment.add_fragment_resources(rendered_item)
+                        content = rendered_item.content
+                        contents.append(content)
+                    contents = contents[0]
+                    loc = contents.find("freetextresponse+block@")
+                    if loc != -1:
+                        contents = contents[loc:len(contents)]
+                        loc2 = contents.find('"')
+                        contents = contents[:loc2]
+                        try:
+                            answered = StudentModule.objects.get(module_state_key__contains=contents, student=student_id)
+                            new_toc.append(section)
+                        except:
+                            continue
+                except:
+                    continue
+            chapter['sections'] = new_toc
+            if len(new_toc) < 1:
+                empty_chapter.append(chapter)
+        table_of_contents['chapters'] = [ele for ele in table_of_contents['chapters'] if ele not in empty_chapter]
+        """
+        End of sambaash additions
+        """
         courseware_context['accordion'] = render_accordion(
             self.request,
             self.course,
@@ -493,7 +540,6 @@ class JournalIndex(View):
                 table_of_contents['next_of_active_section'],
             )
             courseware_context['fragment'] = self.section.render(self.view, section_context)
-
             if self.section.position and self.section.has_children:
                 self._add_sequence_title_to_context(courseware_context)
 
@@ -503,6 +549,31 @@ class JournalIndex(View):
         else:
             courseware_context['microfrontend_link'] = None
 
+        contents = []
+        display_names = [self.section.get_parent().display_name_with_default, self.section.display_name_with_default]
+        display_items = self.section.get_display_items()
+        for item in display_items:
+            # NOTE (CCB): This seems like a hack, but I don't see a better method of determining the type/category.
+            item_type = item.get_icon_class()
+            usage_id = item.scope_ids.usage_id
+            rendered_item = item.render(STUDENT_VIEW, courseware_context)
+            fragment.add_fragment_resources(rendered_item)
+            content = rendered_item.content
+            contents.append(content)
+
+        contents = contents[0]
+        loc = contents.find("freetextresponse+block@")
+        courseware_context['module_id'] = contents
+        if loc != -1:
+            try:
+                course_id=six.text_type(self.course_key)
+                student_id=self.request.user.id
+                contents = contents[loc:len(contents)]
+                loc2 = contents.find('"')
+                contents = contents[:loc2]
+                courseware_context['reflection'] = (StudentModule.objects.get(module_state_key__contains=contents, course_id=course_id, student=student_id)).state
+            except:
+                courseware_context['reflection'] = ''
         return courseware_context
 
     def _add_sequence_title_to_context(self, courseware_context):
@@ -541,7 +612,7 @@ class JournalIndex(View):
             """
             return "{url}?child={requested_child}".format(
                 url=reverse(
-                    'courseware_section',
+                    'journalentry_section',
                     args=[six.text_type(self.course_key), section_info['chapter_url_name'], section_info['url_name']],
                 ),
                 requested_child=requested_child,
@@ -580,7 +651,8 @@ def render_accordion(request, course, table_of_contents):
             ('due_date_display_format', course.due_date_display_format),
         ] + list(TEMPLATE_IMPORTS.items())
     )
-    return render_to_string('courseware/accordion.html', context)
+
+    return render_to_string('journal/accordion_journal.html', context)
 
 
 def save_child_position(seq_module, child_name):
