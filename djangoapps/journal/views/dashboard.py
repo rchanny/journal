@@ -840,7 +840,19 @@ def student_journal(request):
             if module_type == 'freetextresponse':
                 has_text = True
         if has_text:
-            reflected_courses.append(course_object) 
+            reflected_courses.append(course_object)
+        # Find number of action items
+        responses = StudentModule.objects.filter(course_id__contains=course, module_type='freetextresponse', student=request.user)
+        action_item_count = 0
+        for response in responses:
+            test = response.state
+            loc = test.find("comments")
+            loc2 = test.find("count_attempts")
+            contents = test[loc+11:loc2-3].replace(" ", "")
+            if len(contents) > 2:
+                action_item_count += 1
+        setattr(course_object, 'action_item_count', action_item_count)
+
     context.update({
         'reflected_courses': reflected_courses
     })

@@ -1,4 +1,4 @@
-<%page args="course_overview, enrollment, entitlement, entitlement_session, course_card_index, is_unfulfilled_entitlement, is_fulfilled_entitlement, entitlement_available_sessions, entitlement_expiration_date, entitlement_expired_at, show_courseware_link, cert_status, can_refund_entitlement, can_unenroll, credit_status, show_email_settings, course_mode_info, is_paid_course, verification_status, course_requirements, dashboard_index, share_settings, related_programs, display_course_modes_on_dashboard, show_consent_link, enterprise_customer_name, resume_button_url, partner_managed_enrollment" expression_filter="h"/>
+<%page args="action_item_count, course_overview, enrollment, entitlement, entitlement_session, course_card_index, is_unfulfilled_entitlement, is_fulfilled_entitlement, entitlement_available_sessions, entitlement_expiration_date, entitlement_expired_at, show_courseware_link, cert_status, can_refund_entitlement, can_unenroll, credit_status, show_email_settings, course_mode_info, is_paid_course, verification_status, course_requirements, dashboard_index, share_settings, related_programs, display_course_modes_on_dashboard, show_consent_link, enterprise_customer_name, resume_button_url, partner_managed_enrollment" expression_filter="h"/>
 
 <%!
 import datetime
@@ -116,7 +116,7 @@ from lms.djangoapps.experiments.utils import UPSELL_TRACKING_FLAG
          <div class="course-info">
           <span  class="info-university">${course_overview.chapter_count} ${_("Chapters")} - </span> <!--sambaash added-->
           <span  class="info-university">${course_overview.vertical_count} ${_("Lessons")} - </span>
-          <span class="info-university">${_("4")} ${_("Action Items")}</span>
+          <span class="info-university">${action_item_count} ${_("Action Items")}</span>
 
           <!--sambaash added-->
          <!--  <span class="info-university">${course_overview.display_org_with_default} - </span> -->
