@@ -288,22 +288,16 @@ from lms.djangoapps.completiontracking.get_course_info import get_blocks_count, 
             </ul>
           </div>
           % else:
-            <div class="empty-dashboard-message">
-              % if display_dashboard_courses:
-                <p>${_("You are not enrolled in any courses yet.")}</p>
-                % if empty_dashboard_message:
-                  <p class="custom-message">${empty_dashboard_message | n, decode.utf8}</p>
-                %endif
-                % if settings.FEATURES.get('COURSES_ARE_BROWSABLE'):
-                  <a class="btn btn-primary" href="${marketing_link('COURSES')}">
-                    ${_("Explore courses")}
-                  </a>
-                %endif
-              % else:
-              <p>${_("Activate your account!")}</p>
-              <p class="custom-message">${ activate_account_message | n, decode.utf8 }</p>
-              % endif
-          </div>
+            <!-- SEARCH EMPTY -->
+            <div class="searchEmptySec">
+                <div class="SEwrap">
+                    <img src="${static.url('images/journal/search-empty.svg')}">
+                    <p>
+                        There is currently no reflection entry found.
+                        You can add them under <b>‘Reflections’</b> of each lesson.
+                    </p>
+                </div>
+            </div>
           % endif
 
           % if staff_access and len(errored_courses) > 0:
@@ -323,55 +317,6 @@ from lms.djangoapps.completiontracking.get_course_info import get_blocks_count, 
             </div>
           % endif
         </div>
-      </div>
-      <div class="side-container" role="complementary" aria-label="messages">
-        %if display_sidebar_account_activation_message:
-          <div class="sidebar-notification">
-            <%include file="${static.get_template_path('registration/account_activation_sidebar_notice.html')}" />
-          </div>
-        %endif
-
-        % if settings.FEATURES.get('ENABLE_DASHBOARD_SEARCH'):
-          <div id="dashboard-search-bar" class="search-bar dashboard-search-bar" role="search" aria-label="Dashboard">
-            <form class="search-form">
-              <label for="dashboard-search-input">${_('Search Your Courses')}</label>
-              <div class="search-field-wrapper">
-                <input id="dashboard-search-input" type="text" class="search-field"/>
-                <button type="submit" class="search-button" title="${_('Search')}">
-                  <span class="icon fa fa-search" aria-hidden="true"></span>
-                </button>
-                <button type="button" class="cancel-button" title="${_('Clear search')}">
-                  <span class="icon fa fa-remove" aria-hidden="true"></span>
-                </button>
-              </div>
-            </form>
-          </div>
-          <div id="dashboard-search-results" class="search-results dashboard-search-results"></div>
-        % endif
-
-        <%block name="skip_links">
-          % if settings.FEATURES.get('ENABLE_ANNOUNCEMENTS'):
-            <a id="announcements-skip" class="nav-skip sr-only sr-only-focusable" href="#announcements">${_("Skip to list of announcements")}</a>
-          % endif
-        </%block>
-        % if settings.FEATURES.get('ENABLE_ANNOUNCEMENTS'):
-          <%include file='dashboard/_dashboard_announcements.html' />
-        % endif
-
-        % if display_sidebar_on_dashboard:
-          <div class="profile-sidebar" id="profile-sidebar" role="region" aria-label="Account Status Info">
-            <header class="profile">
-              <h2 class="account-status-title sr">${_("Account Status Info")}: </h2>
-            </header>
-            <div class="user-info">
-              <ul>
-
-                <%include file="${static.get_template_path('dashboard/_dashboard_status_verification.html')}" />
-
-              </ul>
-            </div>
-          </div>
-        % endif
       </div>
     </div>
 </div>
