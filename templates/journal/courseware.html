@@ -5,6 +5,11 @@
 <%!
 import six
 import waffle
+import tempfile
+import os
+import shutil
+import json
+from mako.template import Template
 
 from django.conf import settings
 from django.urls import reverse
@@ -12,8 +17,9 @@ from django.utils.translation import ugettext as _
 
 from lms.djangoapps.edxnotes.helpers import is_feature_enabled as is_edxnotes_enabled
 from openedx.core.djangolib.js_utils import js_escaped_string
-from openedx.core.djangolib.markup import HTML
+from openedx.core.djangolib.markup import HTML, Text
 from openedx.features.course_experience import course_home_page_title, DISABLE_COURSE_OUTLINE_PAGE_FLAG
+from lms.djangoapps.completiontracking.get_course_info import get_course_completion;
 %>
 <%
    include_special_exams = (
@@ -116,24 +122,13 @@ ${HTML(fragment.foot_html())}
 
 </%block>
 
-<div class="Jheader">
-     <%
-      display_name = course.display_name_with_default
-      if settings.FEATURES.get('CUSTOM_COURSES_EDX', False):
-        ccx = get_current_ccx(course.id)
-        if ccx:
-          display_name = ccx.display_name
-      %>
-  <h2 class="titleIsha">${display_name}</h2>
-  <p class="importantNotify"><span>${_("Important:")}</span>${_(" Only modules with reflection entry will be shown here.")}</p>
-</div>
-
 <div class="container"
   % if getattr(course, 'language'):
     lang="${course.language}"
   % endif
   >
-   <div class="accTNWrap">
+
+   <div class="accTNWrap"">
     <div class="accordionToggleBtn">Chapters</div>
    </div>
    <div class="course-wrapper" role="presentation">
@@ -186,34 +181,53 @@ ${HTML(fragment.foot_html())}
         </header>
 
         <main id="main" tabindex="-1" aria-label="Content">
-            % if getattr(course, 'entrance_exam_enabled') and getattr(course, 'entrance_exam_minimum_score_pct') and entrance_exam_current_score is not UNDEFINED:
-                % if not entrance_exam_passed:
-                <p class="sequential-status-message">
-                    ${_('To access course materials, you must score {required_score}% or higher on this exam. Your current score is {current_score}%.').format(
-                        required_score=int(round(course.entrance_exam_minimum_score_pct * 100)),
-                        current_score=int(round(entrance_exam_current_score * 100))
-                    )}
-                </p>
-                <script type="text/javascript">
-                $(document).ajaxSuccess(function(event, xhr, settings) {
-                    if (settings.url.indexOf("xmodule_handler/problem_check") > -1) {
-                        var data = JSON.parse(xhr.responseText);
-                        if (data.entrance_exam_passed){
-                            location.reload();
-                        }
-                    }
-                });
-                </script>
-                % else:
-                  <p class="sequential-status-message">
-                    ${_('Your score is {current_score}%. You have passed the entrance exam.').format(
-                        current_score=int(round(entrance_exam_current_score * 100))
-                    )}
-                </p>
-                % endif
-            % endif
+          <div
+            class="xblock xblock-student_view xblock-student_view-sequential xmodule_display xmodule_SequenceModule xblock-initialized"
+            data-course-id="${course.id}">
+            <div class="sequence">
+              <div class="sr-is-focusable" tabindex="-1"></div>
+              <div id="seq_content" role="tabpanel" aria-labelledby="tab_0">
+                <div class="xblock xblock-student_view xblock-student_view-vertical xblock-initialized"
+                  data-course-id="${course.id}">
+                  <div class="vert-mod">
+                    <div class="vert vert-2"
+                      data-id="${module_id}">
+                      <div class="xblock xblock-student_view xblock-student_view-freetextresponse xblock-initialized"
+                        data-course-id="${course.id}"
+                        data-init="FreeTextResponseView" data-runtime-class="LmsRuntime" data-runtime-version="1"
+                        data-block-type="freetextresponse"
+                        data-usage-id="${module_id}">
+                        <div class="freetextresponse xmodule_display xmodule_CapaModule problem">
+                          <div class="word-count-message customTKM">Takeaways </div>
+                          <div class="capa_inputtype textline">
+                            <div class="user_input unanswered">
+                              <div class="noneditableAsses" contenteditable="false">
+                                  ${json.loads(reflection)['student_answer']}
+                              </div>
 
-            ${HTML(fragment.body_html())}
+                            </div>
+                          </div>
+                          <div class="word-count-message customTKM">Action Items</div>
+                          <div class="capa_inputtype textline">
+                            <div class="user_input unanswered">
+
+                              <div class="noneditableAsses" contenteditable="false">
+                                  ${json.loads(reflection)['student_comments']}
+                              </div>
+
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+          </div>
         </main>
     </section>
 

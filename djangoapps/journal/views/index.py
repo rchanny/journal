@@ -574,6 +574,7 @@ class JournalIndex(View):
                 courseware_context['reflection'] = (StudentModule.objects.get(module_state_key__contains=contents, course_id=course_id, student=student_id)).state
             except:
                 courseware_context['reflection'] = ''
+
         return courseware_context
 
     def _add_sequence_title_to_context(self, courseware_context):

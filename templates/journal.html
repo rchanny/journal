@@ -146,7 +146,7 @@ from lms.djangoapps.completiontracking.get_course_info import get_blocks_count, 
 </div>
 
 <div class="content-wrapper main-container">
-    
+
     <div class="dashboard" id="dashboard-main">
       <div class="main-container">
         <div class="my-journalWrapper">
@@ -201,8 +201,7 @@ from lms.djangoapps.completiontracking.get_course_info import get_blocks_count, 
                                 </svg></div>
                         </div>
                     </div>   
-
-          % if len(course_entitlements + course_enrollments) > 0:
+          % if len(reflected_courses) > 0:
           <div class="my-courses my-journalListing grid group" id="my-courses">
             <ul class="listing-courses">
             <%
@@ -211,7 +210,7 @@ from lms.djangoapps.completiontracking.get_course_info import get_blocks_count, 
                     getattr(settings, 'SOCIAL_SHARING_SETTINGS', {})
                 )
             %>
-            % for dashboard_index, enrollment in enumerate(course_entitlements + course_enrollments):
+            % for dashboard_index, enrollment in enumerate(reflected_courses):
               <%
                 # Check if the course run is an entitlement and if it has an associated session
                 entitlement = enrollment if isinstance(enrollment, CourseEntitlement) else None

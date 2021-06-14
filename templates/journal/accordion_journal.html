@@ -1,0 +1,110 @@
+<%page expression_filter="h"/>
+<%namespace name='static' file='../static_content.html'/>
+<%!
+    from django.urls import reverse
+    from django.utils.translation import ugettext as _
+    from django.conf import settings
+    from openedx.core.djangolib.markup import HTML, Text
+    from lms.djangoapps.completiontracking.get_course_info import get_course_completion;
+%>
+
+<%def name="make_chapter(chapter)">
+<%
+#sambaash added
+course_completion_dict = get_course_completion(username=user.username, course_id=course_id)
+sequential_complete = []
+for dic in course_completion_dict["data"]["sequentials"] if not course_completion_dict is None else [{"none": 0}]:
+    sequential_complete += list(dic.keys())
+
+#end
+if chapter.get('active'):
+    aria_label = _('{chapter} current chapter').format(chapter=chapter['display_name'])
+    active_class = 'active'
+else:
+    aria_label = chapter['display_name']
+    active_class = ''
+%>
+
+<a href="#${chapter['display_id']}-child" role="button" class="button-chapter chapter ${active_class}" id="${chapter['display_id']}-parent" aria-controls="${chapter['display_id']}-child" aria-expanded="false">
+    <span class="group-heading ${active_class}" aria-label="${aria_label}">
+        <span class="customCIcon icon fa fa-caret-right" aria-hidden="true">
+            <svg width="11" height="11" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M5.49999 0C2.46242 0 0 2.46242 0 5.49999C0 8.53756 2.46242 11 5.49999 11C8.53756 11 11 8.53756 11 5.49999C10.9966 2.46386 8.53614 0.00343003 5.49999 0Z" fill="#CF472D"/>
+<path d="M6.78786 5.20445L6.44731 5.50296V3.5792C6.44731 3.12124 6.02378 2.75 5.50133 2.75C4.97888 2.75 4.55534 3.12124 4.55534 3.5792V5.50063L4.21478 5.20212C3.87531 4.91777 3.34075 4.91777 3.00128 5.20212C2.66624 5.49587 2.66624 5.97206 3.00128 6.26582L5.09871 8.10433C5.32036 8.29856 5.67964 8.29856 5.90129 8.10433L7.99872 6.26582C8.33376 5.97206 8.33376 5.49587 7.99872 5.20212C7.6589 4.9199 7.12627 4.92092 6.78786 5.20445Z" fill="#FAFAFA"/>
+</svg>
+</span>
+        <span class="customIconTxt">${HTML(chapter['display_name'])}</span>
+    </span>
+</a>
+<div class="chapter-content-container" id="${chapter['display_id']}-child" tabindex="-1" role="region" aria-label="${chapter['display_name']} submenu">
+    <div class="chapter-menu">
+        % for section in chapter['sections']:
+
+        <div class="menu-item ${'active' if 'active' in section and section['active'] else ''} ${'graded'  if 'graded' in section and section['graded'] else ''}">
+            <a class="accordion-nav" href="${reverse('journalentry_section', args=[course_id, chapter['url_name'], section['url_name']])}">
+                <p class="accordion-display-name">${HTML(section['display_name'])} ${Text(_('{span_start}current section{span_end}')).format(
+                        span_start=HTML('<span class="sr">'),
+                        span_end=HTML('</span>'),
+                    ) if 'active' in section and section['active'] else ''}
+		     
+		</p>
+
+                ## There are behavior differences between
+                ## rendering of sections which have proctoring/timed examinations
+                ## and those that do not.
+                ##
+                ## Proctoring exposes a exam status message field as well as
+                ## a status icon
+                <%
+                    if section.get('due') is None:
+                        data_string = section['format']
+                    else:
+                        if 'proctoring' in section:
+                            data_string = _('due {date}')
+                        else:
+                            data_string = _("{section_format} due {{date}}").format(section_format=section['format'])
+               %>
+                % if section['format'] or due_date or 'proctoring' in section:
+                <p class="subtitle">
+                    % if 'proctoring' in section:
+                        ## Display the proctored exam status icon and status message
+                        <span class="menu-icon icon fa ${section['proctoring'].get('suggested_icon', 'fa-pencil-square-o')} ${section['proctoring'].get('status', 'eligible')}" aria-hidden="true"></span>
+                        <span class="subtitle-name">${section['proctoring'].get('short_description', '')}</span>
+
+                        ## completed proctored exam statuses should not show the due date
+                        ## since the exam has already been submitted by the user
+                        % if not section['proctoring'].get('in_completed_state', False):
+                            <span class="localized-datetime subtitle-name" data-datetime="${section['due']}" data-string="${data_string}" data-timezone="${user_timezone}" data-language="${user_language}"></span>
+                        % endif
+                    % else:
+                        ## non-proctored section, we just show the exam format and the due date
+                        ## this is the standard case in edx-platform
+                        <span class="localized-datetime subtitle-name" data-datetime="${section['due']}" data-string="${data_string}" data-timezone="${user_timezone}" data-language="${user_language}"></span>
+
+                        % if 'graded' in section and section['graded']:
+                            <span class="menu-icon icon fa fa-pencil-square-o" aria-hidden="true"></span>
+                            <span class="sr">${_("This content is graded")}</span>
+                        % endif
+                    % endif
+                </p>
+                % endif
+            </a>
+        </div>
+        % endfor
+    </div>
+</div>
+</%def>
+% for chapter in toc:
+    ${make_chapter(chapter)}
+% endfor
+
+
+% if toc:
+    <%static:require_module_async module_name="js/courseware/accordion_events" class_name="AccordionEvents">
+        AccordionEvents();
+    </%static:require_module_async>
+
+    <%static:require_module_async module_name="js/dateutil_factory" class_name="DateUtilFactory">
+        DateUtilFactory.transform(iterationKey=".localized-datetime");
+    </%static:require_module_async>
+% endif
