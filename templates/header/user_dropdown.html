@@ -48,6 +48,8 @@ should_show_order_history = should_redirect_to_order_history_microfrontend() and
         % else:
             <div class="mobile-nav-item dropdown-item dropdown-nav-item"><a href="${settings.ENTERPRISE_LEARNER_PORTAL_BASE_URL}/${enterprise_customer_portal.get('slug')}" role="menuitem">${_("Dashboard")}</a></div>
         % endif
+        
+        <div class="mobile-nav-item dropdown-item dropdown-nav-item"><a href="${reverse('journal')}" role="menuitem">${_("My Journal")}</a></div>        
 
         <div class="mobile-nav-item dropdown-item dropdown-nav-item"><a href="/assessment/my-assessment"
                                                                         role="menuitem">${_("My Assessments")}</a>

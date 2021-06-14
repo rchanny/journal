@@ -432,6 +432,7 @@ class JournalIndex(View):
         )
         staff_access = self.is_staff
 
+        journal_url = "/journal/" + str(self.course.id) +"/courseware"
         courseware_context = {
             'csrf': csrf(self.request)['csrf_token'],
             'course': self.course,
@@ -453,6 +454,7 @@ class JournalIndex(View):
             'sequence_title': None,
             'disable_accordion': not DISABLE_COURSE_OUTLINE_PAGE_FLAG.is_enabled(self.course.id),
             'show_search': show_search,
+            'journal_url': journal_url,
         }
         courseware_context.update(
             get_experiment_user_metadata_context(
