@@ -40,7 +40,6 @@ from lms.djangoapps.completiontracking.get_course_info import get_blocks_count, 
 </script>
 % endfor
 </%block>
-
 <%block name="js_extra">
   <script src="${static.url('js/commerce/credit.js')}"></script>
   <%static:js group='dashboard'/>
@@ -156,7 +155,7 @@ from lms.djangoapps.completiontracking.get_course_info import get_blocks_count, 
                     <div class="searchTileWrapper">
                         <div class="searchBox">
                             <img src="${static.url('images/journal/Search-icon.svg')}" alt="">
-                            <input type="text" name="" value="" placeholder="Search for keywords…">
+                            <input type="text" name="" value="" id="searchJournal" placeholder="Search for keywords…">
                         </div>
                         <div class="tileSec">
                             <div href="#" class="[ icon  icon--grid ]  [ fa  fa-th ]  [ icon ] iconSe  active"><svg enable-background="new 0 0 24 24" height="512" viewBox="0 0 24 24" width="512" xmlns="http://www.w3.org/2000/svg">
@@ -203,7 +202,7 @@ from lms.djangoapps.completiontracking.get_course_info import get_blocks_count, 
 
           % if len(reflected_courses) > 0:
           <div class="my-courses my-journalListing grid group" id="my-courses">
-            <ul class="listing-courses">
+            <ul class="listing-courses" id="journal-lists">
             <%
                 share_settings = configuration_helpers.get_value(
                     'SOCIAL_SHARING_SETTINGS',
@@ -287,6 +286,16 @@ from lms.djangoapps.completiontracking.get_course_info import get_blocks_count, 
             % endif
             </ul>
           </div>
+          <!-- SEARCH EMPTY --> 
+          <div class="searchEmptySec" style="display:none;">
+              <div class="SEwrap">
+                  <img src="${static.url('images/journal/search-empty.svg')}">
+                  <p>
+                      There is currently no reflection entry found.
+                      You can add them under <b>‘Reflections’</b> of each lesson.
+                  </p>
+              </div>
+          </div>
           % else:
             <!-- SEARCH EMPTY -->
             <div class="searchEmptySec">
@@ -363,6 +372,37 @@ from lms.djangoapps.completiontracking.get_course_info import get_blocks_count, 
 
         }
     })();
+
+    $(document).ready(function(){
+        $('#searchJournal').on('keyup', function(){
+            // Declare variables
+            var input, filter, ul, li, a, i, txtValue;
+            input = document.getElementById('searchJournal');
+            filter = input.value.toUpperCase();
+            ul = document.getElementById("journal-lists");
+            li = ul.getElementsByTagName('li');
+            count = 0;
+            // Loop through all list items, and hide those who don't match the search query
+            for (i = 0; i < li.length; i++) {
+                a = li[i].getElementsByTagName("a")[1];
+                txtValue = a.textContent || a.innerText;
+                b = li[i].getElementsByTagName("p")[0];
+                txtValue2 = b.textContent || b.innerText;
+                if ((txtValue.toUpperCase().indexOf(filter) > -1) || (txtValue2.toUpperCase().indexOf(filter) > -1)){
+                li[i].style.display = "";
+                count += 1;
+                } else {
+                li[i].style.display = "none";
+                }
+            }
+            if (count==0){
+                document.getElementsByClassName('searchEmptySec')[0].style.display='flex';
+            }
+            else{
+                document.getElementsByClassName('searchEmptySec')[0].style.display='none';
+            } 
+        })
+    });
  </script>
 <div id="email-settings-modal" class="modal" aria-hidden="true">
   <div class="inner-wrapper" role="dialog" aria-labelledby="email-settings-title">
