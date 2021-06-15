@@ -27,6 +27,9 @@ from lms.djangoapps.completiontracking.get_course_info import get_course_complet
    settings.FEATURES.get('ENABLE_SPECIAL_EXAMS', False) and
    (course.enable_proctored_exams or course.enable_timed_exams)
    )
+
+   student_answer = json.loads(reflection)['student_answer']
+   student_comments = json.loads(reflection)['student_comments']
 %>
 
 % if display_reset_dates_banner:
@@ -196,7 +199,7 @@ ${HTML(fragment.foot_html())}
                           <div class="capa_inputtype textline">
                             <div class="user_input unanswered">
                               <div class="noneditableAsses" contenteditable="false">
-                                  ${json.loads(reflection)['student_answer']}
+                                  ${student_answer}
                               </div>
 
                             </div>
@@ -205,8 +208,8 @@ ${HTML(fragment.foot_html())}
                           <div class="capa_inputtype textline">
                             <div class="user_input unanswered">
 
-                              <div class="noneditableAsses" contenteditable="false">
-                                  ${json.loads(reflection)['student_comments']}
+                              <div class="noneditableAsses" contenteditable="false" id="action_items">
+                                  ${student_comments}
                               </div>
 
                             </div>
@@ -311,6 +314,13 @@ buttonChapters.addEventListener('click', function (event) {
 	  }
 }
   );
+
+var action_length = document.getElementById("action_items").innerText.length;
+if (action_length < 1){
+    document.getElementById("action_items").innerText = "No notes recorded";
+    document.getElementById("action_items").style.color = "#999";
+}
+
 </script>
 
 <script type="text/javascript">
